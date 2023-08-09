@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
-const fs = require('fs');
-const Shape = require('./lib/shapes');
+const fs = require('fs').promises;
+const {Circle, Triangle, Square} = require('./lib/shapes');
+const SVG = require('./lib/svg');
 
 const questions = [
     {
@@ -29,9 +30,31 @@ const questions = [
 function init() {
     inquirer.prompt(questions)
         .then((answers) => {
-            console.log(answers);
-            const shape = new Shape(answers);
+            let shape; //declared it here so i can use it outside of the if statements
+            if(answers.shape === "triangle"){
+                shape = new Triangle(answers.shapeColor);
+            }
+            else if(answers.shape === "circle"){
+                shape = new Circle(answers.shapeColor);
+            }
+            if(answers.shape === "square"){
+                shape = new Square(answers.shapeColor);
+            }
+
+            console.log(shape);
+
+            const svg = new SVG();
+            svg.setCharacters(answers.characters, answers.textColor);
+            svg.setShape(shape);
+
+            return fs.writeFile("logo.svg", svg.render());
         })
+        .then(() => {
+            console.log("Generated logo.svg");
+        })
+        .catch(err => {
+            console.error("Error:", err);
+        });
 }
 
 init();

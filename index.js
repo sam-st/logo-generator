@@ -41,8 +41,6 @@ function init() {
                 shape = new Square(answers.shapeColor);
             }
 
-            console.log(shape);
-
             const svg = new SVG();
             svg.setCharacters(answers.characters, answers.textColor);
             svg.setShape(shape);
